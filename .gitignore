@@ -1,0 +1,60 @@
+# XSS Platform .gitignore
+
+# 敏感配置 - 不要提交
+.env
+.env.local
+.env.*.local
+
+# 日誌文件
+*.log
+logs/
+/var/log/*
+
+# 臨時文件
+tmp/
+temp/
+*.tmp
+*.swp
+*~
+
+# 上傳文件
+upload/
+uploads/
+/data/
+/files/
+
+# 快取
+cache/
+/smarty/cache/*
+/smarty/templates_c/*
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+*~
+
+# 備份
+*.backup
+*~
+\#*\#
+*.sql.bak
+
+# Composer
+vendor/
+composer.lock
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 測試
+.phpunit.result.cache

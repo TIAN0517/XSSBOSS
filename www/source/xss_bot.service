@@ -1,0 +1,16 @@
+[Unit]
+Description=XSS Platform Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/root/d3cd1-main/www/source
+ExecStart=/usr/bin/php telegram_bot.php
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/xss_bot.log
+StandardError=append:/var/log/xss_bot_error.log
+
+[Install]
+WantedBy=multi-user.target

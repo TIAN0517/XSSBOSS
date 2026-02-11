@@ -47,11 +47,15 @@
 	</div>
 	</div>
 
-		<div class="panel panel-default">
+	<div class="panel panel-default">
 		<div class="panel-heading">工具链接</div>
 			<div class="panel-body">
       			<ul class="nav nav-stacked">
-				<li><a href="https://xss.bossjy.ccwu.cc/admin/index.php" target="_blank">后台管理</a></li>
+                                {if $user->userId == 1}
+				<li><a href="{$url.root}/xss.php?do=admin">&#9889; 管理員後台</a></li>
+                                {/if}
+				<li><a href="{$url.root}/xss.php?do=payment">&#128176; 充值 VIP</a></li>
+                                <li><a href="https://t.me/XSSBOSS_Bot" target="_blank">&#128172; TG Bot</a></li>
 						</ul>
 	</div>
 	</div>

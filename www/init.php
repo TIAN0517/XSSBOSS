@@ -7,75 +7,106 @@
 define('IN_OLDCMS',true);
 define('ROOT_PATH',dirname(__FILE__));
 
-include(ROOT_PATH.'/config.php');
-// MySQL 兼容层 (PHP 7+ 移除 mysql_* 函数)
+// 加載安全配置
+include(ROOT_PATH.'/source/config.php');
+
+// 调试模式
+if(Config::get('DEBUG') == 'true') {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    error_reporting(0);
+}
+
+// 从 .env 加载基础配置
+$dbConfig = Config::getDB();
+$urlRoot = Config::get('APP_URL', 'https://xss.bossjy.ccwu.cc');
+
+// 旧版兼容变量
+$config = [
+    'debug' => Config::get('DEBUG', 'false'),
+    'urlroot' => $urlRoot,
+    'urlrewrite' => 0,
+    'register' => 1,
+    'mailauth' => 0,
+    'filepath' => '',
+    'fileprefix' => '',
+    'template' => 'default',
+    'expires' => 0,
+    'tbPrefix' => 'oc_',
+    'timezone' => 'Asia/Shanghai',
+    'show' => [],
+    'point' => []
+];
+
+// 数据库连接 - 使用 PDO
+$GLOBALS['db'] = null;
+function DBConnect() {
+    if($GLOBALS['db'] === null) {
+        $dbConfig = Config::getDB();
+        try {
+            $GLOBALS['db'] = new PDO(
+                "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['name']};charset=utf8mb4",
+                $dbConfig['user'],
+                $dbConfig['pass'],
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false
+                ]
+            );
+        } catch(PDOException $e) {
+            die('數據庫連接失敗');
+        }
+    }
+    return $GLOBALS['db'];
+}
+
+// 定义常量
+define('URL_ROOT', $urlRoot);
+define('URL_REWRITE', 0);
+define('REGISTER', 1);
+define('MAIL_AUTH', 0);
+define('FILE_PATH', '');
+define('FILE_PREFIX', '');
+define('TEMPLATE_PATH', ROOT_PATH.'/themes/default');
+define('EXPIRES', 0);
+define('TABLE_PREFIX', 'oc_');
+
+// 加载兼容层和函数
 include(ROOT_PATH.'/mysql_compat.php');
-// WAF 防护模块 (可选加载)
-// include(ROOT_PATH.'/source/waf.class.php'); // 如需启用 WAF，取消注释
-
-//调试模式
-if($config['debug']==false) error_reporting(0);
-
-define('URL_ROOT',$config['urlroot']);
-define('URL_REWRITE',$config['urlrewrite']);
-define('REGISTER',$config['register']);
-define('MAIL_AUTH',$config['mailauth']);
-define('FILE_PATH',$config['filepath']);
-define('FILE_PREFIX',$config['fileprefix']);
-define('TEMPLATE_PATH',ROOT_PATH.'/themes/'.$config['template']);
-define('EXPIRES',$config['expires']);
-define('TABLE_PREFIX',$config['tbPrefix']);
-
 include(ROOT_PATH.'/source/function.php');
 include(ROOT_PATH.'/source/global.func.php');
 include(ROOT_PATH.'/source/class/User.class.php');
 
-//显示设置
-$show=$config['show'];
+// url设置
+$url = [];
+$url['root'] = $urlRoot;
+$url['imagePath'] = '/image/';
+$url['avatarPath'] = '/avatar/';
+$url['fieldPath'] = '/field/';
+$url['themePath'] = $urlRoot.'/themes/default';
 
-//积分设置
-$pointConfig=$config['point'];
-
-//mail设置
-$mailConfig=isset($config['mail']) ? $config['mail'] : array();
-
-//时区设置
-@date_default_timezone_set($config['timezone']);
-
-//url设置
-$url=array();
-$url['root']			=$config['urlroot'];
-$url['imagePath']		=FILE_PREFIX.'/image/';
-$url['avatarPath']		=FILE_PREFIX.'/avatar/';
-$url['fieldPath']		=FILE_PREFIX.'/field/';
-$url['themePath']		=$url['root'].'/themes/'.$config['theme'];
-
-$urlDoArray=array('login','register');
-if($config['urlrewrite']){
-	$url['rewrite']		=1;
-	foreach($urlDoArray as $value){
-		$url[$value]=$url['root']."/{$value}";
-	}
-}else{
-	$url['rewrite']		=0;
-	foreach($urlDoArray as $value){
-		$url[$value]=$url['root'].'/xss.php?do='.$value;
-	}
+$urlDoArray = ['login', 'register'];
+$url['rewrite'] = 0;
+foreach($urlDoArray as $value) {
+    $url[$value] = $url['root'].'/xss.php?do='.$value;
 }
 
-//用户初始化
-$user=new User();
-if($user->userId>0){
-	$show['user']=array(
-		'userId' 		=>$user->userId,
-		'userName'		=>$user->userName,
-		'adminLevel'	=>$user->adminLevel,
-		'token'			=>$user->token,
-		'avatarImg'		=>$user->avatarImg,
-		'avatarImg_s'	=>$user->avatarImg_s,
-		'signature'		=>$user->signature
-	);
+// 用户初始化
+$user = new User();
+if($user->userId > 0) {
+    $show['user'] = [
+        'userId' => $user->userId,
+        'userName' => $user->userName,
+        'adminLevel' => $user->adminLevel,
+        'token' => $user->token,
+        'avatarImg' => $user->avatarImg,
+        'avatarImg_s' => $user->avatarImg_s,
+        'signature' => $user->signature
+    ];
 }
 
-unset($config); //清理config
-?>
+// 清理
+unset($dbConfig);

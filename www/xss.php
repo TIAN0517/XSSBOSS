@@ -1,13 +1,13 @@
 <?php
 /**
- * index.php ¹¦ÄÜµ÷ÓÃÒ³
+ * index.php ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½Ò³
  * ----------------------------------------------------------------
  * OldCMS,site:http://www.oldcms.com
  */
 
 include('init.php');
 $do=Val('do','GET',0);
-$dos=array('index','login','project','module','code','api','do','register','user','keepsession');
+$dos=array('index','login','project','module','code','api','do','register','user','keepsession','admin');
 if(!in_array($do,$dos)) $do='index';
 include(ROOT_PATH.'/source/'.$do.'.php');
 
