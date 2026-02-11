@@ -1,72 +1,131 @@
 {include file="header.html"}
-<div class="container">
+<div class="page-layout">
 {include file="menus.html"}
-<div class="col-sm-9">
+<div class="main-content">
 	{literal}
 	<style>
-	.info-row { padding: 15px 0; border-bottom: 1px solid var(--border-color); margin-bottom: 10px; }
+	/* ===== 主內容區 ===== */
+	.main-content {
+		justify-self: stretch;
+		align-self: start;
+		min-width: 0;
+	}
+
+	.info-row { padding: 12px 0; border-bottom: 1px solid rgba(0,212,255,0.1); }
 	.info-row:last-child { border-bottom: none; }
-	.info-row strong { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1px; margin-right: 10px; }
-	.info-row a { color: var(--neon-blue); }
+	.info-row strong { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1px; margin-right: 10px; font-size: 12px; }
+	.info-row a { color: var(--neon-blue); transition: color 0.2s ease, text-shadow 0.2s ease; }
 	.info-row a:hover { color: var(--neon-green); }
-	.btn-sm { padding: 8px 15px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; margin-right: 8px; }
-	.btn-primary { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); }
+	.btn-sm { padding: 8px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-radius: 6px; margin-right: 8px; }
+	.btn-primary { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); transition: background 0.2s ease, box-shadow 0.2s ease; }
 	.btn-primary:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
-	.btn-info { background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple); }
+	.btn-info { background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple); transition: background 0.2s ease, box-shadow 0.2s ease; }
 	.btn-info:hover { background: rgba(168,85,247,0.1); box-shadow: 0 0 15px rgba(168,85,247,0.3); }
-	.btn-danger { background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); }
+	.btn-danger { background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); transition: background 0.2s ease, box-shadow 0.2s ease; }
 	.btn-danger:hover { background: rgba(255,71,87,0.1); box-shadow: 0 0 15px rgba(255,71,87,0.3); }
-	pre { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
-	.table { width: 100%; border-collapse: collapse; }
-	.table th { background: rgba(168,85,247,0.1); color: var(--neon-purple); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; padding: 12px; border-bottom: 1px solid var(--border-color); }
-	.table td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
-	.table tr:hover { background: rgba(0,212,255,0.05); }
-	.pagination { margin-top: 20px; text-align: center; }
-	.pagination a, .pagination span { display: inline-block; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 12px; margin: 0 3px; border-radius: 4px; text-decoration: none; transition: all 0.3s ease; }
-	.pagination a:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
-	.pagination .current { background: rgba(0,212,255,0.2); border-color: var(--neon-blue); color: var(--neon-blue); }
+
+	/* ===== Cookie 表格 - 跟我的專案一樣 ===== */
+	.cookie-panel {
+		background: var(--bg-card);
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		overflow: hidden;
+		margin-top: 15px;
+	}
+	.cookie-panel:hover {
+		box-shadow: 0 6px 30px rgba(0,212,255,0.15), 0 0 2px rgba(0,212,255,0.2) inset;
+		border-color: rgba(0,212,255,0.3);
+	}
+	.cookie-panel .panel-heading {
+		background: linear-gradient(135deg, rgba(0,212,255,0.15) 0%, rgba(0,0,0,0.3) 100%) !important;
+		border-bottom: 1px solid var(--border-color);
+		padding: 18px 25px;
+		color: var(--neon-blue);
+		font-weight: bold;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+	.cookie-panel .panel-body { padding: 0; }
+	.cookie-panel .table { width: 100%; border-collapse: collapse; margin-bottom: 0; background: rgba(20,20,30,0.9); }
+	.cookie-panel .table th {
+		background: rgba(168,85,247,0.15);
+		color: var(--neon-purple);
+		text-transform: uppercase;
+		font-size: 12px;
+		letter-spacing: 1px;
+		padding: 20px 25px;
+		border-bottom: 1px solid rgba(0,212,255,0.2);
+		font-weight: 600;
+	}
+	.cookie-panel .table td {
+		padding: 20px 25px;
+		border-bottom: 1px solid rgba(0,212,255,0.1);
+		color: var(--text-primary);
+		vertical-align: middle;
+		background: rgba(20,20,30,0.5);
+	}
+	.cookie-panel .table tr { transition: background 0.2s ease; }
+	.cookie-panel .table tr:hover { background: rgba(0,212,255,0.08); }
+	.cookie-panel .cookie-text {
+		background: rgba(0,0,0,0.4);
+		border: 1px solid rgba(0,212,255,0.1);
+		padding: 8px 16px;
+		border-radius: 6px;
+		font-family: Consolas, monospace;
+		font-size: 12px;
+		color: var(--neon-green);
+	}
+	.cookie-panel .pagination { margin: 20px 0 0 0; padding: 0 20px 20px; }
+	.cookie-panel .pagination a, .pagination span { display: inline-block; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 14px; margin: 0 4px; border-radius: 6px; text-decoration: none; transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+	.cookie-panel .pagination a:hover { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0,212,255,0.1); }
+	.cookie-panel .pagination .current { background: rgba(0,212,255,0.2); border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
 	</style>
 	{/literal}
-	<div class="panel panel-default">
-		<div class="panel-heading">项目: {$project.title}</div>
+	<div class="panel">
+		<div class="panel-heading">&#9889; 項目: {$project.title}</div>
 		<div class="panel-body">
 			<div class="info-row"><strong>描述:</strong> {$project.description|escape:'html'|default:'...'}</div>
 			<div class="info-row"><strong>URL:</strong> <a href="{$url.root}/{$project.urlKey}" target="_blank">{$url.root}/{$project.urlKey}</a></div>
-			<div class="info-row"><strong>创建时间:</strong> {$project.addTime|date_format:'%Y-%m-%d %H:%M:%S'}</div>
-			<div style="margin-top: 20px;">
-				<a href="{$url.root}/xss.php?do=project&act=setcode&ty=create&id={$project.id}" class="btn btn-primary btn-sm">配置项目</a>
-				<a href="{$url.root}/xss.php?do=project&act=viewcode&id={$project.id}" class="btn btn-info btn-sm">获取代码</a>
-				<a href="{$url.root}/xss.php?do=project&act=delete&id={$project.id}&token={$show.user.token}" class="btn btn-danger btn-sm" onclick="return confirm('确定删除吗?')">删除</a>
+			<div class="info-row"><strong>創建:</strong> {$project.addTime|date_format:'%Y-%m-%d %H:%M'}</div>
+			<div style="margin-top: 15px;">
+				<a href="{$url.root}/xss.php?do=project&act=setcode&ty=create&id={$project.id}" class="btn btn-primary btn-sm">配置</a>
+				<a href="{$url.root}/xss.php?do=project&act=viewcode&id={$project.id}" class="btn btn-info btn-sm">代碼</a>
+				<a href="{$url.root}/xss.php?do=project&act=delete&id={$project.id}&token={$show.user.token}" class="btn btn-danger btn-sm" onclick="return confirm('確定刪除嗎?')">刪除</a>
 			</div>
 		</div>
 	</div>
 
-	<div class="panel panel-default">
-		<div class="panel-heading">收到的 Cookie</div>
-		<table class="table">
-			<thead>
-				<tr>
-					<th width="150">时间</th>
-					<th width="200">来源</th>
-					<th width="130">IP</th>
-					<th>Cookie</th>
-				</tr>
-			</thead>
-			<tbody>
-				{foreach from=$contents item=v}
-				<tr>
-					<td>{$v.addTime|date_format:'%Y-%m-%d %H:%M:%S'}</td>
-					<td>{$v.referer|default:'直接访问'|escape:'html'|truncate:30}</td>
-					<td>{$v.ip|escape:'html'}</td>
-					<td><pre style="margin:0;background:transparent;border:none;">{$v.cookie|escape:'html'}</pre></td>
-				</tr>
-				{/foreach}
-			</tbody>
-		</table>
-		<div class="pagination">
-			{$pagers}
+	<div class="cookie-panel">
+		<div class="panel-heading">&#127836; 收到的 Cookie ({$totalContents|default:0})</div>
+		<div class="panel-body">
+			<table class="table">
+				<thead>
+					<tr>
+						<th width="120">時間</th>
+						<th width="150">來源</th>
+						<th width="110">IP</th>
+						<th>Cookie 數據</th>
+					</tr>
+				</thead>
+				<tbody>
+					{foreach from=$contents item=v}
+					<tr>
+						<td>{$v.addTime|date_format:'%m-%d %H:%M:%S'}</td>
+						<td>{$v.referer|default:'直接訪問'|escape:'html'|truncate:20}</td>
+						<td>{$v.ip|escape:'html'}</td>
+						<td><span class="cookie-text">{$v.cookie|escape:'html'|truncate:60}</span></td>
+					</tr>
+					{foreachelse}
+					<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">暫無數據</td></tr>
+					{/foreach}
+				</tbody>
+			</table>
+			<div class="pagination">
+				{$pagers}
+			</div>
 		</div>
 	</div>
 </div>
 </div>
+<!-- /.page-layout -->
 {include file="footer.html"}

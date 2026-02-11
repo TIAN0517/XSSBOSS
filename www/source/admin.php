@@ -8,6 +8,58 @@ include(ROOT_PATH.'/init.php');
 
 $act = Val('act', 'GET');
 
+// Bot 控制
+if (strpos($act, 'bot_') === 0) {
+    $botAct = str_replace('bot_', '', $act);
+
+    // 獲取 Bot 狀態
+    $botStatus = $db->FirstRow("SELECT * FROM ".Tb('bot_status')." WHERE id=1");
+
+    $result = ['success' => false, 'msg' => '操作失敗'];
+
+    // 執行控制命令
+    $cmd = "php " . ROOT_PATH . "/botctl.php " . ($botAct == 'status' ? 'status' : $botAct);
+    if ($botAct != 'status') {
+        exec($cmd . " 2>&1", $output, $ret);
+        $result = ['success' => ($ret === 0), 'msg' => implode("\n", $output) ?: '命令已執行'];
+    } else {
+        // 查詢狀態
+        $status = ['status' => 'unknown', 'uptime' => 0];
+        if ($botStatus) {
+            $status['status'] = $botStatus['status'];
+            $status['uptime'] = $botStatus['start_time'] ? floor((time() - $botStatus['start_time']) / 60) : 0;
+            $status['message_count'] = $botStatus['message_count'];
+            $status['error_count'] = $botStatus['error_count'];
+        }
+        $result = $status;
+    }
+
+    if ($botAct == 'status') {
+        header('Content-Type: application/json');
+        echo json_encode($result);
+    } else {
+        echo json_encode($result);
+    }
+    exit;
+}
+
+// Bot 管理頁面
+if ($act == 'bot') {
+    $botStatus = $db->FirstRow("SELECT * FROM ".Tb('bot_status')." WHERE id=1");
+    $botLogs = $db->GetArray("SELECT * FROM ".Tb('bot_logs')." ORDER BY id DESC LIMIT 50");
+
+    $smarty->assign('botStatus', $botStatus['status'] ?? 'stopped');
+    $smarty->assign('botInfo', [
+        'uptime' => $botStatus['start_time'] ? floor((time() - $botStatus['start_time']) / 60) : 0,
+        'message_count' => $botStatus['message_count'] ?? 0,
+        'error_count' => $botStatus['error_count'] ?? 0,
+        'pid' => $botStatus['pid'] ?? 0
+    ]);
+    $smarty->assign('botLogs', $botLogs);
+    $smarty->display('admin_bot.html');
+    exit;
+}
+
 // 權限檢查 - 只有管理員可以訪問
 if($user->userId != 1) {
     ShowError('權限不足', URL_ROOT.'/xss.php');

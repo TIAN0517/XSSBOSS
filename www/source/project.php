@@ -300,6 +300,20 @@ switch($act){
 		}
 		echo 1;
 		break;
-	default:break;
+	default:
+		// 顯示專案列表 (與首頁相同)
+		$db=DBConnect();
+		$projects=$db->Dataset("SELECT p.*, (SELECT COUNT(*) FROM ".Tb('project_content')." WHERE projectId=p.id) AS contentNum FROM ".Tb('project')." p WHERE p.userId='".$user->userId."' ORDER BY p.id DESC");
+		$modules=$db->Dataset("SELECT * FROM ".Tb('module')." WHERE userId='".$user->userId."'");
+		include('common.php');
+		$smarty=InitSmarty();
+		$smarty->assign('do',$do);
+		$smarty->assign('show',$show);
+		$smarty->assign('url',$url);
+		$smarty->assign('user',$user);
+		$smarty->assign('projects',$projects);
+		$smarty->assign('modules',$modules);
+		$smarty->display('index.html');
+		break;
 }
 ?>

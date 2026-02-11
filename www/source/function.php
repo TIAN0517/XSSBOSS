@@ -7,17 +7,19 @@
 if(!defined('IN_OLDCMS')) die('Access Denied');
 
 /**
-	DBConnect 数据库连接方法
-	@param 	$configFile		string	数据库配置文件
+	DBConnect 数据库连接方法 (使用 init.php 中定義的版本)
+	@param 	$configFile		string	数据库配置文件 (已棄用)
 	@return $db				object	BlueDB类对象
  */
-function DBConnect($configFile=''){
-	if(!file_exists($configFile)) $configFile=ROOT_PATH.'/config.php';
-	require($configFile);
-	require_once(ROOT_PATH.'/source/class/DB.class.php');
-	$db=BlueDB::DB($config['dbType']);
-	$db->Connect($config['dbHost'],$config['dbUser'],$config['dbPwd'],$config['database'],$config['charset'],$config['tbPrefix']);
-	return $db;
+if(!function_exists('DBConnect')) {
+	function DBConnect($configFile=''){
+		if(!file_exists($configFile)) $configFile=ROOT_PATH.'/config.php';
+		require($configFile);
+		require_once(ROOT_PATH.'/source/class/DB.class.php');
+		$db=BlueDB::DB($config['dbType']);
+		$db->Connect($config['dbHost'],$config['dbUser'],$config['dbPwd'],$config['database'],$config['charset'],$config['tbPrefix']);
+		return $db;
+	}
 }
 
 /* 获得Smarty对象 */

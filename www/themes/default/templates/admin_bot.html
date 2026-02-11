@@ -1,0 +1,155 @@
+{include file="header.html"}
+<div class="page-layout">
+{include file="menus.html"}
+<div class="main-content">
+{literal}
+<style>
+.bot-status-card {
+    background: linear-gradient(145deg, rgba(25,25,35,0.95) 0%, rgba(18,18,28,0.9) 100%);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+}
+.status-running { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+.status-stopped { background: #ff4757; box-shadow: 0 0 10px #ff4757; }
+.status-error { background: #ffa502; box-shadow: 0 0 10px #ffa502; }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
+.stat-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 15px; text-align: center; }
+.stat-value { font-size: 24px; font-weight: bold; color: var(--neon-blue); }
+.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+.btn-bot {
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 12px 30px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+}
+.btn-bot:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+.btn-stop { border-color: var(--neon-red); color: var(--neon-red); }
+.btn-stop:hover { background: rgba(255,71,87,0.1); box-shadow: 0 0 20px rgba(255,71,87,0.3); }
+.btn-restart { border-color: #ffa502; color: #ffa502; }
+.btn-restart:hover { background: rgba(255,165,2,0.1); box-shadow: 0 0 20px rgba(255,165,2,0.3); }
+.log-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+.log-table th { background: rgba(0,212,255,0.1); color: var(--neon-purple); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+.log-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 12px; }
+.log-table tr:hover { background: rgba(0,212,255,0.03); }
+.log-time { color: var(--text-muted); font-family: monospace; }
+.action-start { color: var(--neon-green); }
+.action-stop { color: var(--neon-red); }
+.action-restart { color: #ffa502; }
+.action-payment { color: var(--neon-blue); }
+.action-bind { color: var(--neon-purple); }
+</style>
+{/literal}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span>&#9889; Telegram Bot 管理</span>
+        <span style="float:right;font-size:12px;color:var(--text-muted);">
+            <a href="https://t.me/XSSBOSS_Bot" target="_blank" style="color:var(--neon-blue);">&#128172; 開啟 Bot</a>
+        </span>
+    </div>
+    <div class="panel-body">
+        <div class="bot-status-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+                <h3 style="margin:0;color:var(--text-primary);">
+                    <span class="status-indicator status-{$botStatus}" id="statusIndicator"></span>
+                    Bot 狀態: <span id="statusText" style="text-transform:capitalize;color:var(--neon-blue);">{$botStatus}</span>
+                </h3>
+                <div>
+                    <button class="btn-bot" onclick="botControl('start')" {if $botStatus == 'running'}disabled{/if}>啟動</button>
+                    <button class="btn-bot btn-stop" onclick="botControl('stop')" {if $botStatus != 'running'}disabled{/if}>停止</button>
+                    <button class="btn-bot btn-restart" onclick="botControl('restart')">重啟</button>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="uptimeValue">{$botInfo.uptime|default:0}</div>
+                    <div class="stat-label">運行分鐘</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{$botInfo.message_count|default:0}</div>
+                    <div class="stat-label">消息數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{$botInfo.error_count|default:0}</div>
+                    <div class="stat-label">錯誤數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{if $botStatus == 'running'}是{else}否{/if}</div>
+                    <div class="stat-label">運行中</div>
+                </div>
+            </div>
+        </div>
+
+        <h4 style="color:var(--text-secondary);margin-bottom:15px;text-transform:uppercase;font-size:12px;letter-spacing:1px;">最近操作日誌</h4>
+        <table class="log-table">
+            <thead>
+                <tr>
+                    <th width="160">時間</th>
+                    <th width="100">操作</th>
+                    <th>詳情</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach from=$botLogs item=log}
+                <tr>
+                    <td class="log-time">{$log.created_at|date_format:'Y-m-d H:i:s'}</td>
+                    <td><span class="action-{$log.action}">{$log.action}</span></td>
+                    <td>{$log.details|escape:'html'|default:'-'}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">暫無日誌</td></tr>
+                {/foreach}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function botControl(action) {
+    if (!confirm('確定要' + (action == 'start' ? '啟動' : action == 'stop' ? '停止' : '重啟') + ' Bot 嗎？')) return;
+
+    fetch('{$url.root}/xss.php?do=admin&act=bot_' + action)
+        .then(r => r.json())
+        .then(data => {
+            alert(data.msg);
+            if (data.success) location.reload();
+        })
+        .catch(e => alert('操作失敗: ' + e));
+}
+
+// 自動刷新狀態
+setInterval(function() {
+    fetch('{$url.root}/xss.php?do=admin&act=bot_status')
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('statusIndicator').className = 'status-indicator status-' + data.status;
+            document.getElementById('statusText').innerText = data.status;
+            document.getElementById('uptimeValue').innerText = data.uptime || 0;
+        });
+}, 10000);
+</script>
+</div>
+</div>
+{include file="footer.html"}

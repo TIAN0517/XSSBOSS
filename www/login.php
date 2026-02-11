@@ -97,6 +97,7 @@ $themePath = $urlRoot . '/themes/' . $config['template'];
 <meta charset="utf-8">
 <title>Jy Technical Team - Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="<?php echo $urlRoot; ?>/favicon.svg">
 <link rel="stylesheet" href="<?php echo $themePath; ?>/css/bootstrap.min.css">
 <link rel="stylesheet" href="<?php echo $themePath; ?>/css/cyber.css">
 <link rel="stylesheet" href="<?php echo $themePath; ?>/css/css.css">

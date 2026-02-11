@@ -19,6 +19,21 @@ $plans = [
 
 $act = Val('act', 'GET');
 
+// 獲取用戶訂閱狀態
+$subscription = [];
+if($user->userId > 0) {
+    $sub = $db->FirstRow("SELECT * FROM ".Tb('user_subscriptions')." WHERE userId={$user->userId}");
+    if($sub && $sub['expire_time'] > time()) {
+        $subscription = [
+            'plan_key' => $sub['plan_key'],
+            'plan_name' => $plans[$sub['plan_key']]['name'] ?? 'VIP',
+            'max_projects' => $sub['max_projects'],
+            'max_cookies_per_day' => $sub['max_cookies_per_day'],
+            'expire_time' => date('Y-m-d', $sub['expire_time'])
+        ];
+    }
+}
+
 switch($act) {
     case 'create':
         // 創建訂單
@@ -59,6 +74,15 @@ switch($act) {
         // USDT Webhook（TRON API 調用）
         $txHash = Val('txHash', 'POST');
         // 驗證交易...
+        break;
+
+    default:
+        // 顯示訂閱頁面
+        $smarty = InitSmarty();
+        $smarty->assign('plans', $plans);
+        $smarty->assign('subscription', $subscription);
+        $smarty->assign('address', $tronConfig['receiveAddress']);
+        $smarty->display('payment.html');
         break;
 }
 

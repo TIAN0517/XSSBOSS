@@ -1,5 +1,12 @@
 {include file="header.html"}
 <style>
+/* ===== 主內容區 ===== */
+.main-content {
+	justify-self: stretch;
+	align-self: start;
+	min-width: 0;
+}
+
 .admin-dashboard { padding: 20px 0; }
 .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
 .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; text-align: center; }
@@ -18,19 +25,20 @@
 .panel-section h4 { color: var(--neon-blue); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
 .filter-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
 .filter-bar input, .filter-bar select { padding: 10px 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); }
-.filter-bar button { padding: 10px 20px; background: var(--neon-blue); border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+.filter-bar button { padding: 10px 20px; background: var(--neon-blue); border: none; border-radius: 4px; color: #fff; cursor: pointer; transition: background 0.2s ease; }
 .filter-bar button:hover { background: var(--neon-purple); }
-.action-btn { padding: 5px 10px; border-radius: 4px; font-size: 11px; margin-right: 5px; }
+.action-btn { padding: 5px 10px; border-radius: 4px; font-size: 11px; margin-right: 5px; transition: opacity 0.2s ease; }
 .action-btn.view { background: var(--neon-blue); color: #fff; }
 .action-btn.delete { background: #ff4757; color: #fff; }
 </style>
 
-<div class="container">
+<div class="page-layout">
 {include file="menus.html"}
-<div class="col-sm-9">
+<div class="main-content">
     <div class="admin-dashboard">
         <h2 style="color: var(--neon-blue); margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px;">
             <span style="margin-right: 10px;">&#9889;</span>管理員後台
+            <a href="{$url.root}/xss.php?do=admin&act=bot" class="btn-bot" style="float:right;font-size:11px;padding:8px 15px;">&#128172; Bot 管理</a>
         </h2>
 
         <!-- 統計卡片 -->
@@ -220,6 +228,7 @@
     </div>
 </div>
 </div>
+<!-- /.page-layout -->
 
 <script>
 function viewData(id) {

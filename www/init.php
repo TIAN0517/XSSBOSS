@@ -5,7 +5,7 @@
  * OldCMS,site:http://www.oldcms.com
  */
 define('IN_OLDCMS',true);
-define('ROOT_PATH',dirname(__FILE__));
+if(!defined('ROOT_PATH')) define('ROOT_PATH',dirname(__FILE__));
 
 // 加載安全配置
 include(ROOT_PATH.'/source/config.php');
@@ -40,25 +40,21 @@ $config = [
     'point' => []
 ];
 
-// 数据库连接 - 使用 PDO
+// 数据库连接 - 使用 BlueDB
 $GLOBALS['db'] = null;
 function DBConnect() {
     if($GLOBALS['db'] === null) {
         $dbConfig = Config::getDB();
-        try {
-            $GLOBALS['db'] = new PDO(
-                "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['name']};charset=utf8mb4",
-                $dbConfig['user'],
-                $dbConfig['pass'],
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false
-                ]
-            );
-        } catch(PDOException $e) {
-            die('數據庫連接失敗');
-        }
+        include_once(ROOT_PATH.'/source/class/DB.class.php');
+        $GLOBALS['db'] = BlueDB::DB('mysql');
+        $GLOBALS['db']->Connect(
+            $dbConfig['host'],
+            $dbConfig['user'],
+            $dbConfig['pass'],
+            $dbConfig['name'],
+            'utf8mb4',
+            TABLE_PREFIX
+        );
     }
     return $GLOBALS['db'];
 }
@@ -71,6 +67,7 @@ define('MAIL_AUTH', 0);
 define('FILE_PATH', '');
 define('FILE_PREFIX', '');
 define('TEMPLATE_PATH', ROOT_PATH.'/themes/default');
+define('ADMIN_PATH', ROOT_PATH.'/admin');
 define('EXPIRES', 0);
 define('TABLE_PREFIX', 'oc_');
 
