@@ -2,7 +2,7 @@
 /**
  * 添加中文模塊名稱和 C2 持久化模塊
  */
-define('ROOT_PATH', dirname(__FILE__));
+if(!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__FILE__));
 include(ROOT_PATH.'/init.php');
 
 $db = DBConnect();
