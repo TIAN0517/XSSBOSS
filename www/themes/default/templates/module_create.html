@@ -1,0 +1,121 @@
+{include file="header.html"}
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+	{literal}
+	<style>
+	.form-group { margin-bottom: 20px; }
+	.form-group label { display: block; color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+	input[type="text"] { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px; border-radius: 4px; width: 100%; transition: all 0.3s ease; }
+	input[type="text"]:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+	textarea { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px; border-radius: 4px; width: 100%; min-height: 80px; resize: vertical; transition: all 0.3s ease; }
+	textarea:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+	ul { list-style: none; padding: 0; margin: 10px 0; }
+	ul li { padding: 8px 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
+	ul li:last-child { border-bottom: none; }
+	ul li a { color: var(--neon-blue); cursor: pointer; }
+	ul li a:hover { color: var(--neon-green); }
+	input[type="radio"] { margin-right: 8px; accent-color: var(--neon-blue); }
+	.btn-success { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); text-transform: uppercase; letter-spacing: 2px; padding: 12px 25px; border-radius: 4px; transition: all 0.3s ease; cursor: pointer; }
+	.btn-success:hover { background: rgba(0,255,136,0.1); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+	.btn-default { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; padding: 12px 25px; border-radius: 4px; transition: all 0.3s ease; cursor: pointer; }
+	.btn-default:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
+	</style>
+	{/literal}
+	<div class="panel panel-default">
+		<div class="panel-heading">创建模块</div>
+		<div class="panel-body">
+			<form id="contentForm" action="{$url.root}/xss.php?do=module&act=create_submit" method="post">
+				<input type="hidden" name="token" value="{$show.user.token}" />
+				<div class="form-group">
+					<label>模块名称</label>
+					<input type="text" name="title" id="title" placeholder="输入模块名称" required>
+				</div>
+				<div class="form-group">
+					<label>模块描述</label>
+					<textarea name="description" id="description" placeholder="输入模块描述"></textarea>
+				</div>
+				<div class="form-group">
+					<label>参数 (需要服务器接收的参数名)</label>
+					<ul id="keyList">
+						{foreach from=$keys item=v}
+						<li> <input name="keys[]" value="{$v.key}" type="checkbox" checked> {$v.key} ({$v.value})</li>
+						{/foreach}
+						<li><a href="javascript:void(0)" onclick="AddKey(this)">+ 添加参数</a></li>
+					</ul>
+				</div>
+				<div class="form-group">
+					<label>配置参数 (使用此模块时需要配置的参数，如参数名为 user，则代码引用：{set.user})</label>
+					<ul id="setkeyList">
+						<li><a href="javascript:void(0)" onclick="AddKey(this,'setkeys[]')">+ 添加配置参数</a></li>
+					</ul>
+				</div>
+				<div class="form-group">
+					<label>代码 ({projectId}为项目id,{set.***}为配置参数)</label>
+					<textarea name="code" id="code" style="min-height: 150px;" placeholder="输入模块代码"></textarea>
+				</div>
+				<div class="form-group">
+					<label>是否公开</label>
+					<input type="radio" name="isOpen" value="0" checked> <span style="margin-right: 15px;">私密</span>
+					<input type="radio" name="isOpen" value="1"> <span>公开</span>
+				</div>
+				<div class="form-group">
+					<input class="btn-success" type="button" value="创建" onclick="SubmitContent()">
+					<input class="btn-default" type="button" value="取消" onclick="history.go(-1)" style="margin-left: 10px;">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+{literal}
+<script>
+function SubmitContent(){
+	if($("#title").val()==""){
+		alert("模块名称不能为空");
+		return false;
+	}
+	$("#contentForm").submit();
+}
+function AddKey(obj,keyname){
+	var liObj=document.createElement("li");
+	$(obj).parent().before(liObj);
+	var input=document.createElement("input");
+	input.type="text";
+	input.style.cssText="background:rgba(0,0,0,0.3);border:1px solid var(--border-color);color:var(--text-primary);padding:8px;border-radius:4px;width:200px;margin-right:10px;";
+	$(liObj).append(input);
+	var btn=document.createElement("input");
+	btn.type="button";
+	btn.value="确认";
+	btn.style.cssText="background:transparent;border:1px solid var(--neon-blue);color:var(--neon-blue);padding:8px 15px;border-radius:4px;cursor:pointer;margin-right:10px;";
+	$(liObj).append(btn);
+	var del=document.createElement("a");
+	del.href="javascript:void(0)";
+	del.innerHTML="删除";
+	del.style.cssText="color:var(--neon-red);cursor:pointer;";
+	$(liObj).append(del);
+	btn.onclick=function(){
+		var txt=$(input).val();
+		if(txt==""){
+			alert("请输入参数名");
+		}else{
+			$(input).remove();
+			$(btn).remove();
+			var checkObj=document.createElement("input");
+			$(del).before(checkObj);
+			checkObj.type="checkbox";
+			checkObj.checked="checked";
+			checkObj.style.marginRight="10px";
+			var keyName=keyname!=null ? keyname : "keys[]";
+			$(checkObj).attr("name",keyName);
+			$(checkObj).attr("value",txt);
+			$(del).before(document.createTextNode(" "+txt+" "));
+		}
+	};
+	del.onclick=function(){
+		$(liObj).remove();
+	};
+}
+{/literal}
+</script>
+{include file="footer.html"}

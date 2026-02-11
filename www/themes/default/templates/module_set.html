@@ -1,0 +1,53 @@
+{include file="header.html"}
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+	{literal}
+	<style>
+	.form-group { margin-bottom: 25px; }
+	.form-group label { display: block; color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+	textarea.form-control { min-height: 200px; resize: vertical; }
+	select.form-control { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px; border-radius: 4px; width: 100%; }
+	select.form-control:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+	.btn-primary { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); text-transform: uppercase; letter-spacing: 2px; padding: 12px 30px; transition: all 0.3s ease; border-radius: 4px; }
+	.btn-primary:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+	</style>
+	{/literal}
+	<div class="panel panel-default">
+		<div class="panel-heading">配置模块: {$module.title}</div>
+		<div class="panel-body">
+			<form action="{$url.root}/xss.php?do=module&act=set_submit" method="post">
+				<input type="hidden" name="id" value="{$module.id}">
+				<input type="hidden" name="token" value="{$show.user.token}">
+
+				<div class="form-group">
+					<label>模块名称</label>
+					<input type="text" name="title" value="{$module.title|default:''}" class="form-control" required>
+				</div>
+
+				<div class="form-group">
+					<label>模块描述</label>
+					<textarea name="description" class="form-control" rows="3">{$module.description|default:''}</textarea>
+				</div>
+
+				<div class="form-group">
+					<label>开放使用</label>
+					<select name="isOpen" class="form-control">
+						<option value="0" {if $module.isOpen==0}selected{/if}>私密</option>
+						<option value="1" {if $module.isOpen==1}selected{/if}>公开</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>模块代码</label>
+					<textarea name="code" class="form-control" rows="10">{$module.code|default:''}</textarea>
+				</div>
+
+				<button type="submit" class="btn btn-primary">保存</button>
+				<a href="{$url.root}/xss.php?do=module&act=view&id={$module.id}" class="btn btn-default" style="margin-left: 10px; background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; padding: 12px 30px; border-radius: 4px; transition: all 0.3s ease;">返回</a>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+{include file="footer.html"}

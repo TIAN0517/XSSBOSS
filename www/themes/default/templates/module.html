@@ -1,0 +1,47 @@
+{include file="header.html"}
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+	{literal}
+	<style>
+	.table { width: 100%; border-collapse: collapse; }
+	.table th { background: rgba(168,85,247,0.1); color: var(--neon-purple); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; padding: 12px; border-bottom: 1px solid var(--border-color); }
+	.table td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+	.table tr:hover { background: rgba(0,212,255,0.05); }
+	.table a { color: var(--neon-blue); transition: all 0.3s ease; }
+	.table a:hover { color: var(--neon-green); }
+	</style>
+	{/literal}
+	<div class="panel panel-default">
+		<div class="panel-heading">模块列表</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th width="200">模块名称</th>
+					<th>模块描述</th>
+					<th width="100">创建人</th>
+					<th width="100">创建时间</th>
+					<th width="80">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				{foreach from=$modules item=v}
+				<tr>
+					<td><a href="{$url.root}/xss.php?do=module&act=view&id={$v.id}">{$v.title}</a></td>
+					<td>{$v.description|escape:'html'|default:''}</td>
+					<td>{$v.userName|default:'系统'}</td>
+					<td>{$v.addTime|date_format:'%Y-%m-%d'}</td>
+					<td>
+						<a href="{$url.root}/xss.php?do=module&act=set&id={$v.id}">配置</a>
+						{if $show.user.adminLevel>0 || $v.userId==$show.user.userId}
+						<a href="{$url.root}/xss.php?do=module&act=delete&id={$v.id}&token={$show.user.token}" onclick="return confirm('确定删除吗?');" style="color: var(--neon-red); margin-left: 10px;">删除</a>
+						{/if}
+					</td>
+				</tr>
+				{/foreach}
+			</tbody>
+		</table>
+	</div>
+</div>
+</div>
+{include file="footer.html"}

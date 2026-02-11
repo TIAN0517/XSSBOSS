@@ -1,0 +1,40 @@
+{include file="admin_header.html"}
+		<div class="panel">
+			<div class="panel-heading">整站过滤模块</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="80">编号</th>
+							<th>过滤域名</th>
+							<th width="120">功能操作</th>
+						</tr>
+					</thead>
+					<tbody>
+					{foreach from=$allfilter key=k item=v}
+						<tr>
+							<td>{$v.id}</td>
+							<td>{$v.filterurl|escape:'html'}</td>
+							<td><a href="{$url.root}/admin/index.php?do=admin_module&act=delfilter&id={$v.id}&token={$show.user.token}" onclick="return confirm('确定删除吗?');" style="color:var(--neon-red);">删除</a></td>
+						</tr>
+					{/foreach}
+					</tbody>
+				</table>
+
+				<div style="margin-top:30px; padding:20px; background:rgba(0,0,0,0.2); border-radius:8px;">
+					<h4 style="margin-bottom:15px;">增加过滤域名</h4>
+					<form action="{$url.root}/admin/index.php?do=admin_module&act=addfilter" method="post">
+						<div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+							<label style="min-width:100px; color:var(--text-secondary); text-transform:uppercase; font-size:12px;">过滤域名：</label>
+							<input type="text" name="filterurl" style="background:rgba(0,0,0,0.3); border:1px solid var(--border-color); color:var(--text-primary); padding:10px 15px; border-radius:4px; width:300px;" placeholder="示例：gov.cn">
+							<button type="submit" class="btn btn-success" style="background:transparent; border:1px solid var(--neon-green); color:var(--neon-green); padding:10px 25px; border-radius:4px; cursor:pointer;">提交</button>
+						</div>
+					</form>
+				</div>
+
+				<div style="margin-top:20px; padding:15px; background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); border-radius:8px;">
+					<p style="color:var(--text-secondary); font-size:12px; line-height:1.8;">过滤模块使用说明：此功能会检测当前网站域名，如果域名含有的字母与你设定的过滤参数一致，则代码区域为空，什么也不加载。<br>注意：此功能是不加载JS代码。不要只写com，否则只要域名中含有com就不加载js代码。填写示例：gov.cn</p>
+				</div>
+			</div>
+		</div>
+{include file="admin_footer.html"}

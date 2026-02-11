@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>后台管理 - {$show.sitename}</title>
+<link rel="stylesheet" href="{$url.themePath}/css/bootstrap.min.css">
+<link rel="stylesheet" href="{$url.themePath}/css/cyber.css">
+<script src="{$url.themePath}/js/jquery.min.js"></script>
+<script src="{$url.themePath}/js/bootstrap.min.js"></script>
+{literal}
+<style>
+body { background: var(--bg-dark); min-height: 100vh; }
+.admin-wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+.admin-header { background: rgba(10,10,15,0.95); border-bottom: 1px solid var(--border-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+.admin-header .brand { color: var(--neon-blue); font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; }
+.admin-header .user { color: var(--text-secondary); font-size: 13px; }
+.admin-header .user a { color: var(--neon-blue); margin-left: 15px; }
+.admin-header .user a:hover { color: var(--neon-green); }
+.admin-body { flex: 1; display: flex; padding: 20px; gap: 20px; }
+.admin-sidebar { width: 220px; flex-shrink: 0; }
+.admin-content { flex: 1; min-width: 0; }
+.menu h3 { color: var(--neon-blue); font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+.menu ul { list-style: none; padding: 0; margin: 0; }
+.menu li { margin-bottom: 5px; }
+.menu li a { display: block; padding: 12px 15px; color: var(--text-secondary); text-decoration: none; border-radius: 4px; transition: all 0.3s ease; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+.menu li a:hover { background: rgba(0,212,255,0.1); color: var(--neon-blue); }
+.menu li.active a { background: rgba(0,212,255,0.2); color: var(--neon-blue); border-left: 3px solid var(--neon-blue); }
+.panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+.panel-heading { background: rgba(0,212,255,0.1); border-bottom: 1px solid var(--border-color); padding: 15px 20px; color: var(--neon-blue); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.panel-body { padding: 20px; }
+h3 { color: var(--text-primary); font-size: 16px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+h4 { color: var(--neon-purple); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 15px 0; }
+.table { width: 100%; border-collapse: collapse; }
+.table th { background: rgba(168,85,247,0.1); color: var(--neon-purple); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; padding: 12px; border-bottom: 1px solid var(--border-color); text-align: left; }
+.table td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+.table tr:hover { background: rgba(0,212,255,0.05); }
+.info-row { padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+.info-row:last-child { border-bottom: none; }
+.info-row th { display: inline-block; min-width: 100px; color: var(--neon-blue); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+.admin-footer { padding: 20px; text-align: center; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.admin-footer a { color: var(--neon-blue); }
+.list { list-style: none; padding: 0; margin: 0; }
+.list li { padding: 8px 0; border-bottom: 1px solid var(--border-color); }
+.list li:last-child { border-bottom: none; }
+</style>
+{/literal}
+</head>
+<body>
+<div class="admin-wrapper">
+<div class="admin-header">
+	<div class="brand">XSS Platform Admin</div>
+	<div class="user">
+		<span>用户：{$show.user.userName}</span>
+		<a href="{$url.root}/xss.php">返回前台</a>
+		<a href="{$url.root}/xss.php?do=login&act=logout">退出</a>
+	</div>
+</div>
+<div class="admin-body">

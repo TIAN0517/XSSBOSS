@@ -1,0 +1,60 @@
+{include file="header.html"}
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+	{literal}
+	<style>
+	.checkbox { margin-bottom: 10px; }
+	.checkbox label { color: var(--text-primary); text-transform: none; letter-spacing: 0; font-size: 14px; }
+	.checkbox input[type="checkbox"] { margin-right: 10px; accent-color: var(--neon-blue); }
+	.form-inline { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+	.form-inline label { margin: 0; min-width: 100px; }
+	.form-inline .form-control { width: auto; flex: 1; }
+	.btn-primary { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); text-transform: uppercase; letter-spacing: 2px; padding: 12px 30px; transition: all 0.3s ease; border-radius: 4px; }
+	.btn-primary:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+	textarea.form-control { min-height: 120px; resize: vertical; }
+	</style>
+	{/literal}
+	<div class="panel panel-default">
+		<div class="panel-heading">项目配置: {$project.title}</div>
+		<div class="panel-body">
+			<form action="{$url.root}/xss.php?do=project&act=setcode_submit" method="post">
+				<input type="hidden" name="id" value="{$project.id}">
+				<input type="hidden" name="ty" value="{$ty}">
+				<input type="hidden" name="token" value="{$show.user.token}">
+
+				<div class="form-group">
+					<label>选择模块</label>
+					{foreach from=$modulesCan item=m}
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" name="modules[]" value="{$m.id}" {if $m.choosed}checked{/if}>
+							{$m.title} - {$m.description|escape:'html'|default:''}
+						</label>
+					</div>
+					{if $m.setkeys}
+					<div style="margin-left: 20px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 4px; margin-bottom: 10px;">
+						{foreach from=$m.setkeys item=sk}
+						<div class="form-inline">
+							<label>{$sk.key}:</label>
+							<input type="text" name="setkey_{$m.id}_{$sk.key}" value="{$sk.value|default:''}" class="form-control">
+						</div>
+						{/foreach}
+					</div>
+					{/if}
+					{/foreach}
+				</div>
+
+				<div class="form-group">
+					<label>自定义代码</label>
+					<textarea name="code" class="form-control" rows="5">{$project.code|default:''}</textarea>
+				</div>
+
+				<button type="submit" class="btn btn-primary">保存配置</button>
+				<a href="{$url.root}/xss.php?do=project&act=view&id={$project.id}" class="btn btn-default" style="margin-left: 10px; border: 1px solid var(--border-color); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; padding: 12px 30px; border-radius: 4px; transition: all 0.3s ease;">返回</a>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+{include file="footer.html"}

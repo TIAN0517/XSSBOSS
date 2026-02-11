@@ -1,0 +1,92 @@
+{include file="header.html"}
+<div class="container">
+{literal}
+<style>
+.form-register { max-width: 500px; margin: 0 auto; }
+.form-register .panel { margin-bottom: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+input[type="text"], input[type="password"] { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px 15px; border-radius: 4px; width: 100%; transition: all 0.3s ease; }
+input[type="text"]:focus, input[type="password"]:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+input::placeholder { color: var(--text-muted); }
+.btn-success { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); text-transform: uppercase; letter-spacing: 2px; padding: 12px 30px; border-radius: 4px; transition: all 0.3s ease; cursor: pointer; }
+.btn-success:hover { background: rgba(0,255,136,0.1); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+</style>
+{/literal}
+<div class="col-sm-9" style="float:none; margin:0 auto;">
+<form id="formRegister" action="{$url.root}/xss.php?do=register&act=submit" method="post">
+<div class="panel panel-default">
+  <div class="panel-heading">注册</div>
+  <div class="panel-body">
+{if $key}
+<div class="form-group">
+	<label>邀请码</label>
+	<input type="text" placeholder="请输入邀请码" id="key" name="key" value="{$key}">
+</div>
+{else}
+<div class="form-group">
+	<label>邀请码 {if $register eq 'invite'}<span style="color:var(--neon-red);">* 必填</span>{/if}</label>
+	<input type="text" placeholder="请输入邀请码" id="key" name="key">
+</div>
+{/if}
+<div class="form-group">
+	<label>用户名 <span style="color:var(--neon-red);">*</span></label>
+	<input type="text" placeholder="4-20个字符(字母、汉字、数字、下划线)" id="user" name="user" required>
+</div>
+<div class="form-group">
+	<label>邮箱 <span style="color:var(--neon-red);">*</span></label>
+	<input type="text" placeholder="可以使用邮箱登录" id="email" name="email" required>
+</div>
+<div class="form-group">
+	<label>手机 (可空)</label>
+	<input type="text" placeholder="可以用来接收短信提醒" id="phone" name="phone">
+</div>
+<div class="form-group">
+	<label>密码 <span style="color:var(--neon-red);">*</span></label>
+	<input type="password" placeholder="6-20个字符(字母、数字、下划线)" id="pwd" name="pwd" required>
+</div>
+<div class="form-group">
+	<label>确认密码 <span style="color:var(--neon-red);">*</span></label>
+	<input type="password" placeholder="请再次输入密码" id="pwd2" name="pwd2" required>
+</div>
+<button type="submit" class="btn-success" style="width:100%;">提交注册</button>
+  </div>
+</div>
+</form>
+</div>
+</div>
+<script src="{$url.themePath}/js/jquery.min.js"></script>
+<script>
+{literal}
+function Register(){
+	var errNum=0;
+	var user=$("#user").val();
+	var email=$("#email").val();
+	var pwd=$("#pwd").val();
+	var pwd2=$("#pwd2").val();
+	var key=$("#key").val();
+
+	if(user=="" || !/^[\w\u4E00-\u9FA5]{4,20}$/.test(user)){
+		alert("用户名格式不正确，4-20个字符");
+		return false;
+	}
+	if(email=="" || !/^(\w+\.)*?\w+@(\w+\.)+\w+$/.test(email)){
+		alert("邮箱格式不正确");
+		return false;
+	}
+	if(pwd=="" || !/^\w{6,20}$/.test(pwd)){
+		alert("密码格式不正确，6-20个字符");
+		return false;
+	}
+	if(pwd2!=pwd){
+		alert("两次输入密码不相同");
+		return false;
+	}
+	return true;
+}
+$("#formRegister").on("submit", function(){
+	return Register();
+});
+{/literal}
+</script>
+{include file="footer.html"}

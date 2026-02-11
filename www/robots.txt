@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /xss.php?do=login
+Disallow: /xss.php?do=register
+Disallow: /xss.php?do=api
+Disallow: /xss.php?do=keepsession
+Disallow: /templates_c/
+Disallow: /upload/

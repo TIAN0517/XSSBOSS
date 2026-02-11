@@ -1,0 +1,123 @@
+<?php /* Smarty version 2.6.26, created on 2026-02-11 04:10:36
+         compiled from user_ipurlseting.html */ ?>
+<?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
+smarty_core_load_plugins(array('plugins' => array(array('modifier', 'escape', 'user_ipurlseting.html', 23, false),array('modifier', 'default', 'user_ipurlseting.html', 23, false),array('modifier', 'date_format', 'user_ipurlseting.html', 25, false),)), $this); ?>
+<?php $_smarty_tpl_vars = $this->_tpl_vars;
+$this->_smarty_include(array('smarty_include_tpl_file' => "header.html", 'smarty_include_vars' => array()));
+$this->_tpl_vars = $_smarty_tpl_vars;
+unset($_smarty_tpl_vars);
+ ?>
+<div class="container">
+<?php $_smarty_tpl_vars = $this->_tpl_vars;
+$this->_smarty_include(array('smarty_include_tpl_file' => "menus.html", 'smarty_include_vars' => array()));
+$this->_tpl_vars = $_smarty_tpl_vars;
+unset($_smarty_tpl_vars);
+ ?>
+<div class="col-sm-9" style="float:right;">
+	
+	<style>
+	.form-group { margin-bottom: 15px; }
+	.form-group label { display: inline-block; color: var(--text-secondary); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; min-width: 90px; margin-right: 10px; }
+	input[type="text"] { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 15px; border-radius: 4px; width: 200px; transition: all 0.3s ease; }
+	input[type="text"]:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+	.btn-success { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); text-transform: uppercase; letter-spacing: 2px; padding: 10px 25px; border-radius: 4px; transition: all 0.3s ease; cursor: pointer; }
+	.btn-success:hover { background: rgba(0,255,136,0.1); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
+	.table { width: 100%; border-collapse: collapse; }
+	.table th { background: rgba(255,71,87,0.1); color: var(--neon-red); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; padding: 12px; border-bottom: 1px solid var(--border-color); }
+	.table td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+	.table a { color: var(--neon-blue); }
+	.table a:hover { color: var(--neon-red); }
+	hr { border: none; border-top: 1px solid var(--border-color); margin: 30px 0; }
+	.info-text { color: var(--text-muted); font-size: 11px; margin-top: 10px; line-height: 1.8; }
+	</style>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">IP-URL 黑名单</div>
+		<div class="panel-body">
+			<table class="table">
+				<thead>
+					<tr>
+						<th width="100">项目ID</th>
+						<th width="150">黑名单IP</th>
+						<th>黑名单URL</th>
+						<th width="100">创建时间</th>
+						<th width="80">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php $_from = $this->_tpl_vars['ipurlseting']; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array'); }if (count($_from)):
+    foreach ($_from as $this->_tpl_vars['v']):
+?>
+					<tr>
+						<td><?php echo $this->_tpl_vars['v']['moduleid']; ?>
+</td>
+						<td><?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['v']['ip'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')))) ? $this->_run_mod_handler('default', true, $_tmp, '-') : smarty_modifier_default($_tmp, '-')); ?>
+</td>
+						<td><?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['v']['url'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')))) ? $this->_run_mod_handler('default', true, $_tmp, '-') : smarty_modifier_default($_tmp, '-')); ?>
+</td>
+						<td><?php echo ((is_array($_tmp=$this->_tpl_vars['v']['addTime'])) ? $this->_run_mod_handler('date_format', true, $_tmp, '%Y-%m-%d') : smarty_modifier_date_format($_tmp, '%Y-%m-%d')); ?>
+</td>
+						<td>
+						<a href="<?php echo $this->_tpl_vars['url']['root']; ?>
+/xss.php?do=user&act=delipurl&id=<?php echo $this->_tpl_vars['v']['id']; ?>
+&token=<?php echo $this->_tpl_vars['show']['user']['token']; ?>
+" onclick="return confirm('确定删除吗?');">删除</a>
+						</td>
+					</tr>
+					<?php endforeach; endif; unset($_from); ?>
+				</tbody>
+			</table>
+
+			<form id="formSeting" action="<?php echo $this->_tpl_vars['url']['root']; ?>
+/xss.php?do=user&act=addipurl" method="post" style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 4px;">
+				<div class="form-group">
+					<label>项目ID：</label>
+					<input type="text" id="moduleid" name="moduleid" maxlength="20" required>
+					<span style="color:var(--text-muted); font-size: 11px;">* 必填</span>
+				</div>
+				<div class="form-group">
+					<label>黑名单IP：</label>
+					<input type="text" id="ip" name="ip" maxlength="20">
+				</div>
+				<div class="form-group">
+					<label>黑名单URL：</label>
+					<input type="text" id="url" name="url" maxlength="255" style="width: 400px;">
+				</div>
+				<button type="submit" class="btn-success">提交</button>
+				<p class="info-text">提示：加入黑名单后，对应项目不会再接受此IP或URL的相关Cookie信息。<br>URL过滤示例：www.xxx.com/xxx，如果写com则会过滤所有包含com的链接。</p>
+			</form>
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">整站过滤</div>
+		<div class="panel-body">
+			<p style="color: var(--text-muted); font-size: 11px; margin-bottom: 15px;">只要插入的网站域名中出现以下字符，都不会加载XSS代码。</p>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>过滤关键词</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php $_from = $this->_tpl_vars['allfilter']; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array'); }if (count($_from)):
+    foreach ($_from as $this->_tpl_vars['s']):
+?>
+					<tr>
+						<td><?php echo ((is_array($_tmp=$this->_tpl_vars['s']['filterurl'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')); ?>
+</td>
+					</tr>
+					<?php endforeach; endif; unset($_from); ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</div>
+<?php $_smarty_tpl_vars = $this->_tpl_vars;
+$this->_smarty_include(array('smarty_include_tpl_file' => "footer.html", 'smarty_include_vars' => array()));
+$this->_tpl_vars = $_smarty_tpl_vars;
+unset($_smarty_tpl_vars);
+ ?>

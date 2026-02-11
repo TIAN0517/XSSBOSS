@@ -1,0 +1,46 @@
+{include file="admin_header.html"}
+		<div class="panel">
+			<div class="panel-heading">公共模块审核</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="150">模块名称</th>
+							<th>模块描述</th>
+							<th width="80">创建人</th>
+							<th width="100">创建时间</th>
+							<th width="120">审核</th>
+							<th width="80">审核人</th>
+						</tr>
+					</thead>
+					<tbody>
+					{foreach from=$modules key=k item=v}
+						<tr>
+							<td><a target="_blank" href="{$url.root}/xss.php?do=module&act=view&id={$v.id}">{$v.title}</a></td>
+							<td>{$v.description|escape:'html'|default:''}</td>
+							<td>{$v.userName}</td>
+							<td>{$v.addTime|date_format:"%Y-%m-%d"}</td>
+							<td>
+								{if $v.isAudit==1}
+								<span style="color:var(--neon-green)">已通过</span>
+								<a href="{$url.root}/admin/index.php?do=admin_module&act=audit&isAudit=2&id={$v.id}" style="color:var(--neon-red); margin-left:10px;">不通过</a>
+								{elseif $v.isAudit==0}
+								<span style="color:#ffc107">未审核</span>
+								<a href="{$url.root}/admin/index.php?do=admin_module&act=audit&isAudit=1&id={$v.id}" style="color:var(--neon-blue); margin-left:10px;">通过</a>
+								<a href="{$url.root}/admin/index.php?do=admin_module&act=audit&isAudit=2&id={$v.id}" style="color:var(--neon-red);">不通过</a>
+								{else}
+								<span style="color:var(--neon-red)">未通过</span>
+								<a href="{$url.root}/admin/index.php?do=admin_module&act=audit&isAudit=1&id={$v.id}" style="color:var(--neon-blue); margin-left:10px;">通过</a>
+								{/if}
+							</td>
+							<td>{$v.managerName|default:'-'}</td>
+						</tr>
+					{/foreach}
+					</tbody>
+				</table>
+				<div style="margin-top:20px; text-align:center;">
+					{$nav}
+				</div>
+			</div>
+		</div>
+{include file="admin_footer.html"}

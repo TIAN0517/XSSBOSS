@@ -1,0 +1,57 @@
+{include file="admin_header.html"}
+		<div class="panel">
+			<div class="panel-heading">发信Email功能设置 (随机调用其中一个发信)</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="200">Email服务器</th>
+							<th width="200">Email邮箱</th>
+							<th width="150">Email密码</th>
+							<th width="150">功能操作</th>
+						</tr>
+					</thead>
+					<tbody>
+					{foreach from=$emaillist key=k item=v}
+						<tr>
+							<td>{$v.ehost|escape:'html'}</td>
+							<td>{$v.euser|escape:'html'}</td>
+							<td>{$v.epass|escape:'html'}</td>
+							<td>
+								<a href="{$url.root}/admin/index.php?do=admin_module&act=delmail&id={$v.id}&token={$show.user.token}" onclick="return confirm('确定删除吗?');" style="color:var(--neon-red);">删除</a>
+								<span style="margin:0 10px; color:var(--border-color);">|</span>
+								<a href="javascript:void(0)" onclick="Dtest('{$v.id}',this,'{$show.user.token}')" style="color:var(--neon-blue);">测试邮件</a>
+							</td>
+						</tr>
+					{/foreach}
+					</tbody>
+				</table>
+
+				<div style="margin-top:30px; padding:20px; background:rgba(0,0,0,0.2); border-radius:8px;">
+					<h4 style="margin-bottom:15px;">增加新发送邮件服务器</h4>
+					<form action="{$url.root}/admin/index.php?do=admin_module&act=emailadd" method="post">
+						<div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+							<input type="text" name="ehost" style="background:rgba(0,0,0,0.3); border:1px solid var(--border-color); color:var(--text-primary); padding:10px 15px; border-radius:4px; width:180px;" placeholder="Email服务器" required>
+							<input type="text" name="euser" style="background:rgba(0,0,0,0.3); border:1px solid var(--border-color); color:var(--text-primary); padding:10px 15px; border-radius:4px; width:200px;" placeholder="Email邮箱" required>
+							<input type="text" name="epass" style="background:rgba(0,0,0,0.3); border:1px solid var(--border-color); color:var(--text-primary); padding:10px 15px; border-radius:4px; width:150px;" placeholder="Email密码" required>
+							<button type="submit" class="btn btn-success" style="background:transparent; border:1px solid var(--neon-green); color:var(--neon-green); padding:10px 25px; border-radius:4px; cursor:pointer;">提交</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+<script src="{$url.themePath}/js/jquery.min.js"></script>
+<script>
+{literal}
+function Dtest(id,obj,token){
+	if(confirm("注意：测试信件会发送到您个人设置中所保存的邮箱里面！")){
+		$.post('/admin/index.php?do=admin_module&act=testemail&r='+Math.random(),{'id':id,'token':token},function(re){
+			if(re==1){
+				$(obj).parent().parent().remove();
+			}
+		});
+	}
+}
+{/literal}
+</script>
+{include file="admin_footer.html"}

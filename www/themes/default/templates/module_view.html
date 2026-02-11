@@ -1,0 +1,56 @@
+{include file="header.html"}
+<div class="container">
+{include file="menus.html"}
+<div class="col-sm-9">
+	{literal}
+	<style>
+	.info-row { padding: 12px 0; border-bottom: 1px solid var(--border-color); margin-bottom: 5px; }
+	.info-row:last-child { border-bottom: none; }
+	.info-row strong { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1px; margin-right: 10px; min-width: 80px; display: inline-block; }
+	pre { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; color: var(--text-primary); }
+	.btn-primary { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); text-transform: uppercase; letter-spacing: 2px; padding: 12px 25px; border-radius: 4px; transition: all 0.3s ease; margin-right: 10px; }
+	.btn-primary:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+	.badge { display: inline-block; padding: 4px 10px; border-radius: 3px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-right: 5px; }
+	.badge-success { background: rgba(0,255,136,0.2); color: var(--neon-green); border: 1px solid rgba(0,255,136,0.3); }
+	.badge-default { background: rgba(150,150,150,0.2); color: var(--text-secondary); border: 1px solid rgba(150,150,150,0.3); }
+	.badge-warning { background: rgba(255,193,7,0.2); color: #ffc107; border: 1px solid rgba(255,193,7,0.3); }
+	.badge-danger { background: rgba(255,71,87,0.2); color: var(--neon-red); border: 1px solid rgba(255,71,87,0.3); }
+	</style>
+	{/literal}
+	<div class="panel panel-default">
+		<div class="panel-heading">模块: {$module.title}</div>
+		<div class="panel-body">
+			<div class="info-row"><strong>描述:</strong> {$module.description|escape:'html'|default:'...'}</div>
+			<div class="info-row"><strong>创建人:</strong> {$module.userName|default:'系统'}</div>
+			<div class="info-row"><strong>创建时间:</strong> {$module.addTime|date_format:'%Y-%m-%d %H:%M:%S'}</div>
+			<div class="info-row"><strong>状态:</strong>
+				{if $module.isOpen==1}
+					<span class="badge badge-success">公开</span>
+				{else}
+					<span class="badge badge-default">私密</span>
+				{/if}
+				{if $module.isAudit==1}
+					<span class="badge badge-success">已审核</span>
+				{elseif $module.isAudit==2}
+					<span class="badge badge-danger">未通过</span>
+				{else}
+					<span class="badge badge-warning">待审核</span>
+				{/if}
+			</div>
+
+			{if $module.code}
+			<div style="margin-top: 20px;">
+				<label style="color: var(--neon-purple); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">模块代码</label>
+				<pre>{$module.code|escape:'html'}</pre>
+			</div>
+			{/if}
+
+			<div style="margin-top: 20px;">
+				<a href="{$url.root}/xss.php?do=module&act=set&id={$module.id}" class="btn btn-primary">配置</a>
+				<a href="{$url.root}/xss.php?do=module&act=list" class="btn btn-default" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; padding: 12px 25px; border-radius: 4px; transition: all 0.3s ease;">返回列表</a>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+{include file="footer.html"}
