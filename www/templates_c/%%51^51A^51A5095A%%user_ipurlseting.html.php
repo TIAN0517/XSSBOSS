@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.26, created on 2026-02-11 04:10:36
+<?php /* Smarty version 2.6.26, created on 2026-02-11 16:58:33
          compiled from user_ipurlseting.html */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('modifier', 'escape', 'user_ipurlseting.html', 23, false),array('modifier', 'default', 'user_ipurlseting.html', 23, false),array('modifier', 'date_format', 'user_ipurlseting.html', 25, false),)), $this); ?>
@@ -7,13 +7,13 @@ $this->_smarty_include(array('smarty_include_tpl_file' => "header.html", 'smarty
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
-<div class="container">
+<div class="page-layout">
 <?php $_smarty_tpl_vars = $this->_tpl_vars;
 $this->_smarty_include(array('smarty_include_tpl_file' => "menus.html", 'smarty_include_vars' => array()));
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
-<div class="col-sm-9" style="float:right;">
+<div class="main-content">
 	
 	<style>
 	.form-group { margin-bottom: 15px; }

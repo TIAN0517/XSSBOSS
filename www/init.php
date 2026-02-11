@@ -3,6 +3,7 @@
  * init.php 初始化信息
  * ----------------------------------------------------------------
  * OldCMS,site:http://www.oldcms.com
+ * Last Updated: 2026-02-11
  */
 define('IN_OLDCMS',true);
 if(!defined('ROOT_PATH')) define('ROOT_PATH',dirname(__FILE__));
