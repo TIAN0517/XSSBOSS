@@ -7,6 +7,42 @@
 .col-sm-3 .nav-stacked li { margin-bottom: 5px; }
 .col-sm-3 .nav-stacked li a { color: var(--text-secondary); padding: 10px 15px; border-radius: 4px; transition: all 0.3s ease; display: block; }
 .col-sm-3 .nav-stacked li a:hover { color: var(--neon-blue); background: rgba(0,212,255,0.05); }
+
+/* 公共模塊卡片式佈局 */
+.public-modules-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.module-card {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,212,255,0.05);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none !important;
+}
+.module-card:hover {
+    background: rgba(0,212,255,0.15);
+    border-color: var(--neon-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,212,255,0.2);
+}
+.module-card .icon { font-size: 20px; margin-bottom: 4px; }
+.module-card .name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.module-card:hover .name { color: var(--neon-blue); }
 </style>
 {/literal}
 <div class="col-sm-3">
@@ -35,15 +71,18 @@
 	</div>
 
 	<div class="panel panel-default">
-		<div class="panel-heading">公共模块</div>
+		<div class="panel-heading">公共模塊</div>
 			<div class="panel-body">
-      			<ul class="nav nav-stacked">
+      			<div class="public-modules-grid">
 		{foreach from=$modules item=v}
 		{if $v.isOpen==1 && $v.isAudit==1}
-		<li><a href="{$url.root}/xss.php?do=module&act=view&id={$v.id}">{$v.title}</a></li>
+		<a class="module-card" href="{$url.root}/xss.php?do=module&act=view&id={$v.id}">
+			<span class="icon">&#9889;</span>
+			<span class="name">{$v.title}</span>
+		</a>
 		{/if}
 		{/foreach}
-						</ul>
+					</div>
 	</div>
 	</div>
 
